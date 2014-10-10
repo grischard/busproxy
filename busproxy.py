@@ -66,15 +66,19 @@ def hello():
                   <title>Bus stop json proxy</title>
               </head>
               <body>
-              <h4>Bus proxy</h4>
+              <h2>Bus proxy</h2>
               <p>Translates between wgs84 and luref, and sends http://localhost as a referer. Gets you Luxembourg bus stops in json.</p>
               <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a></p>
-              <p>Optional GET parameters are:
+              <h4>Optional GET parameters</h4>
               <ul>
                   <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle.</li>
                   <li><a href="/around/49.61/6.12?callback=mycallback"><b>callback</b></a>, default <b>None</b>. See <a href="https://en.wikipedia.org/wiki/JSONP">JSONP</a>.</li>
                   <li><a href="/around/49.61/6.12?debug=True"><b>debug</b></a>, default <b>False</b>. Pretty-print json, include all the garbage from the original json.</li>
               </ul>
+              <h4>What do I do with this?</h4>
+              <ul>
+                  <li>The output is valid geojson, which you can easily <a href="http://leafletjs.com/examples/geojson.html">display on a map</a></li>
+                  <li>With the bus ID, you can get a <a href="http://travelplanner.mobiliteit.lu/hafas/cdt/help.exe/dn?tpl=infobox&iblayout=1&ibname=xss&ibextid=200405020&ibinit=box_2">live departures/arrivals board</a> and even <a href="http://travelplanner.mobiliteit.lu/hafas/cdt/stboard.exe/dn?L=vs_stb&input=200405020&boardType=dep&time=now&selectDate=today&start=yes&requestType=0&maxJourneys=20">json</a>. Using https://getcontents.herokuapp.com/?url=http%3A%2F%2Ftravelplanner.mobiliteit.lu etc. can make this easier to integrate.
               <p>Data <a href="https://en.wikipedia.org/wiki/Web_scraping#Legal_issues">scraped without permission</a> from Verkéiersverbond, Geoportail. <emph>Mat ♥ codéiert.</emph></p>
               </body>
               </html>
