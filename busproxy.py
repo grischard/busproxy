@@ -73,9 +73,9 @@ def hello():
               <ul>
                   <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle.</li>
                   <li><a href="/around/49.61/6.12?callback=mycallback"><b>callback</b></a>, default <b>None</b>. See <a href="https://en.wikipedia.org/wiki/JSONP">JSONP</a>.</li>
-                  <li><a href="/around/49.61/6.12?debug=True">debug</a>, default <b>False</b>. Pretty-print json, include all the garbage from the original json.</li>
+                  <li><a href="/around/49.61/6.12?debug=True"><b>debug</b></a>, default <b>False</b>. Pretty-print json, include all the garbage from the original json.</li>
               </ul>
-              <p>Data <a href="https://en.wikipedia.org/wiki/Web_scraping#Legal_issues">scraped without permission</a> from Verkéiersverbond, Geoportail. <emph>Mat ❤️ codéiert.</emph></p>
+              <p>Data <a href="https://en.wikipedia.org/wiki/Web_scraping#Legal_issues">scraped without permission</a> from Verkéiersverbond, Geoportail. <emph>Mat ♥ codéiert.</emph></p>
               </body>
               </html>
               """
