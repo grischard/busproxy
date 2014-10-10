@@ -44,6 +44,8 @@ def get_features(bbox):
             feature['geometry']['coordinates'] = ["{0:.6f}".format(pos[1]), "{0:.6f}".format(pos[0])]
     if debug:
         myjson = json.dumps(myjson, indent=4, sort_keys=True, ensure_ascii=False, separators=(',', ': ')).encode('utf8')
+    else:
+        myjson = json.dumps(myjson).encode('utf8')
     if callback:
         if validate_jsonp.is_valid_jsonp_callback_value(callback):
             myjson = callback + '(' + myjson + ');'
