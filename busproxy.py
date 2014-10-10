@@ -36,7 +36,7 @@ def get_features(bbox):
 
     app.logger.debug('URL: %s', url)
 
-    headers = {'Referer': my_referer}
+    headers = {'Referer': my_referer, 'User-Agent': 'Salut vun busproxy.herokuapp.com'}
     r = requests.get(url, headers=headers)
     myjson = r.json()
     if myjson['type'] == 'FeatureCollection':
@@ -57,7 +57,7 @@ def get_features(bbox):
 
 @app.route('/')
 def hello():
-    return 'Try /around/49.61/6.12 , perhaps with ?radius=100 , &callback=foo and &debug for pretty json. Data scraped from Verkéiersverbond, Geoportail.'
+    return '<h4>Bus proxy</h4> <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a>, perhaps with ?radius=100 , &callback=foo and &debug for pretty json.</p> <p>Data scraped without permission from Verkéiersverbond, Geoportail.</p>'
 
 
 @app.route('/around/<float:lon>/<float:lat>')
