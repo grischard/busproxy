@@ -43,8 +43,10 @@ def get_features(bbox):
         for feature in myjson['features']:
             pos = transform(LUREF, WGS84, feature['geometry']['coordinates'][0], feature['geometry']['coordinates'][1])
             feature['geometry']['coordinates'] = ["{0:.6f}".format(pos[1]), "{0:.6f}".format(pos[0])]
+            if not debug:
+                del feature['properties']['html']
     if debug:
-        myjson = json.dumps(myjson, indent=4, sort_keys=True, ensure_ascii=False, separators=(',', ': ')).encode('utf8')
+        myjson = json.dumps(myjson, indent=4, sort_keys=True, ensure_ascii=False, separators=(',', ': '))
     else:
         myjson = json.dumps(myjson).encode('utf8')
     if callback:
@@ -52,17 +54,36 @@ def get_features(bbox):
             myjson = callback + '(' + myjson + ');'
         else:
             return 'Callback must be valid Javascript identifier as defined in the ECMAScript specification'
-    return myjson
+    return myjson.encode('utf8')
 
 
 @app.route('/')
 def hello():
-    return '<h4>Bus proxy</h4> <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a>, perhaps with ?radius=100 , &callback=foo and &debug for pretty json.</p> <p>Data scraped without permission from Verkéiersverbond, Geoportail.</p>'
+    return """
+              <!doctype html>
+              <html>
+              <head>
+                  <title>Bus stop json proxy</title>
+              </head>
+              <body>
+              <h4>Bus proxy</h4>
+              <p>Translates between wgs84 and luref, and sends http://localhost as a referer. Gets you Luxembourg bus stops in json.</p>
+              <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a></p>
+              <p>Optional GET parameters are:
+              <ul>
+                  <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle.</li>
+                  <li><a href="/around/49.61/6.12?callback=mycallback"><b>callback</b></a>, default <b>None</b>. See <a href="https://en.wikipedia.org/wiki/JSONP">JSONP</a>.</li>
+                  <li><a href="/around/49.61/6.12?debug=True">debug</a>, default <b>False</b>. Pretty-print json, include all the garbage from the original json.</li>
+              </ul>
+              <p>Data <a href="https://en.wikipedia.org/wiki/Web_scraping#Legal_issues">scraped without permission</a> from Verkéiersverbond, Geoportail. <emph>Mat ❤️ codéiert.</emph></p>
+              </body>
+              </html>
+              """
 
 
 @app.route('/around/<float:lon>/<float:lat>')
 def around(lon, lat):
-    '''Given a lat, lon, return points within the square that contains <radius> circle. Default radius is 1000.'''
+    '''Given a lat, lon, return points within the square that contains <radius> circle. Default radius is 100.'''
     radius = request.form.get('radius', 1000)  # default radius 1000
     pos = transform(WGS84, LUREF, lat, lon)
     bbox = [round(pos[0]-radius), round(pos[1]-radius), round(pos[0]+radius), round(pos[1]+radius)]
