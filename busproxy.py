@@ -25,10 +25,10 @@ LUREF = Proj("+init=EPSG:2169")
 WGS84 = Proj(proj='latlong', datum='WGS84')
 
 
-def get_features(bbox):
-    layer = request.form.get('layer', 'arrets_bus')  # default layer is arrets_bus
-    limit = request.form.get('limit', '100')         # default limit is 100
-    debug = request.form.get('debug', False)         # default debug is False
+def get_features(bbox, myrequest):
+    layer = myrequest.form.get('layer', 'arrets_bus')  # default layer is arrets_bus
+    limit = myrequest.form.get('limit', '100')         # default limit is 100
+    debug = myrequest.form.get('debug', False)         # default debug is False
     callback = request.form.get('callback', None)    # default callback is None
     my_referer = 'http://localhost'
 
@@ -56,7 +56,7 @@ def get_features(bbox):
 
 @app.route('/')
 def hello():
-    return 'Try /around/49.61/6.12 , perhaps with ?radius=100 and &callback=foo . Data scraped from Verkéiersverbond, Geoportail.'
+    return 'Try /around/49.61/6.12 , perhaps with ?radius=100 , &callback=foo and &debug for pretty json. Data scraped from Verkéiersverbond, Geoportail.'
 
 
 @app.route('/around/<float:lon>/<float:lat>')
@@ -66,7 +66,7 @@ def around(lon, lat):
     pos = transform(WGS84, LUREF, lat, lon)
     bbox = [round(pos[0]-radius), round(pos[1]-radius), round(pos[0]+radius), round(pos[1]+radius)]
     # show the bus stops within (radius) of that point
-    results = get_features(bbox)
+    results = get_features(bbox, request)
 
     resp = Response(response=results, status=200, mimetype="application/json")
     return resp
