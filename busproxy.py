@@ -95,6 +95,7 @@ def around(lon, lat):
     results = get_features(bbox)
 
     resp = Response(response=results, status=200, mimetype="application/json")
+    resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
 
 if __name__ == "__main__":
