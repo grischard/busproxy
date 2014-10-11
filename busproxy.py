@@ -45,6 +45,8 @@ def get_features(bbox):
             feature['geometry']['coordinates'] = ["{0:.6f}".format(pos[0]), "{0:.6f}".format(pos[1])]
             if not debug:
                 del feature['properties']['html']
+            feature['mobiliteitid'] = feature['id']
+            del feature['id']
     if debug:
         myjson = json.dumps(myjson, indent=4, sort_keys=True, ensure_ascii=False, separators=(',', ': '))
     else:
