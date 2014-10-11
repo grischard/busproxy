@@ -18,18 +18,20 @@ import requests
 import json
 import os
 import validate_jsonp
+import re
 
 app = Flask(__name__)
 
 LUREF = Proj("+init=EPSG:2169")
 WGS84 = Proj(proj='latlong', datum='WGS84')
 
+bboxregex = re.compile('([-+]?[0-9]*\.?[0-9]+,){3}([-+]?[0-9]*\.?[0-9]+)')  # four comma-separated ints or floats.
 
 def get_features(bbox):
-    layer = request.args.get('layer', default='arrets_bus')  # default layer is arrets_bus
-    limit = request.args.get('limit', default=100, type=int)         # default limit is 100
-    debug = request.args.get('debug', False)         # default debug is False
-    callback = request.args.get('callback', None)    # default callback is None
+    layer = request.args.get('layer', default='arrets_bus')    # default layer is arrets_bus
+    limit = request.args.get('limit', default=9999, type=int)  # default limit is 9999
+    debug = request.args.get('debug', False)                   # default debug is False
+    callback = request.args.get('callback', None)              # default callback is None
 
     url = 'http://map.geoportail.lu/bodfeature/search?layers={0}&bbox={1},{2},{3},{4}&maxFeatures={5}'.format(layer, bbox[0], bbox[1], bbox[2], bbox[3], limit)
     my_referer = 'http://localhost'
@@ -70,10 +72,10 @@ def hello():
               <body>
               <h2>Bus proxy</h2>
               <p>Translates between wgs84 and luref, and sends http://localhost as a referer. Gets you Luxembourg bus stops in json.</p>
-              <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a></p>
+              <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a> </p>
               <h4>Optional GET parameters</h4>
               <ul>
-                  <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle.</li>
+                  <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle. Only for /around.</li>
                   <li><a href="/around/49.61/6.12?callback=mycallback"><b>callback</b></a>, default <b>None</b>. See <a href="https://en.wikipedia.org/wiki/JSONP">JSONP</a>.</li>
                   <li><a href="/around/49.61/6.12?debug=True"><b>debug</b></a>, default <b>False</b>. Pretty-print json, include all the garbage from the original json.</li>
               </ul>
@@ -99,6 +101,23 @@ def around(lon, lat):
     resp = Response(response=results, status=200, mimetype="application/json")
     resp.headers.add('Access-Control-Allow-Origin', '*')
     return resp
+
+
+@app.route('/bbox/<mybbox>')
+def bbox(mybbox):
+    '''Given a bbox, return points within it. GeoJSON standard for bbox is WSEN.'''
+    # 6.11,49.59,6.15,49.60
+    # W    S     E    N
+    # if
+    # pos_bottomleft= transform(WGS84, LUREF, lat, lon)
+    if bboxregex.match(mybbox):
+        mybbox = mybbox.split(",")
+        pos_bottomleft = transform(WGS84, LUREF, mybbox[0], mybbox[1])
+        pos_topright = transform(WGS84, LUREF, mybbox[2], mybbox[3])
+        return get_features([pos_bottomleft[0], pos_bottomleft[1], pos_topright[0], pos_topright[1]])
+    else:
+        return "BBOX not understood. Format must be like 6.11,49.59,6.15,49.60, order is WSEN."
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
