@@ -72,7 +72,7 @@ def hello():
               <body>
               <h2>Bus proxy</h2>
               <p>Translates between wgs84 and luref, and sends http://localhost as a referer. Gets you Luxembourg bus stops in json.</p>
-              <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a> </p>
+              <p>Try <a href="/around/49.61/6.12">/around/49.61/6.12</a> or <a href="/bbox/6.11,49.59,6.15,49.60">/bbox/6.11,49.59,6.15,49.60</a> (WSEN)</p>
               <h4>Optional GET parameters</h4>
               <ul>
                   <li><a href="/around/49.61/6.12?radius=100"><b>radius</b></a>, default <b>100</b>. App will return points within the square that contains [radius] circle. Only for /around.</li>
