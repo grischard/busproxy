@@ -96,12 +96,7 @@ def around(lon, lat):
     pos = transform(WGS84, LUREF, lat, lon)
     bbox = [round(pos[0]-radius), round(pos[1]-radius), round(pos[0]+radius), round(pos[1]+radius)]
     # show the bus stops within (radius) of that point
-    results = get_features(bbox)
-
-    resp = Response(response=results, status=200, mimetype="application/json")
-    resp.headers.add('Access-Control-Allow-Origin', '*')
-    return resp
-
+    return send_json(get_features(bbox))
 
 @app.route('/bbox/<mybbox>')
 def bbox(mybbox):
@@ -114,10 +109,14 @@ def bbox(mybbox):
         mybbox = mybbox.split(",")
         pos_bottomleft = transform(WGS84, LUREF, mybbox[0], mybbox[1])
         pos_topright = transform(WGS84, LUREF, mybbox[2], mybbox[3])
-        return get_features([pos_bottomleft[0], pos_bottomleft[1], pos_topright[0], pos_topright[1]])
+        return send_json(get_features([pos_bottomleft[0], pos_bottomleft[1], pos_topright[0], pos_topright[1]]))
     else:
         return "BBOX not understood. Format must be like 6.11,49.59,6.15,49.60, order is WSEN."
 
+def send_json(myjson):
+    resp = Response(response=myjson, status=200, mimetype="application/json")
+    resp.headers.add('Access-Control-Allow-Origin', '*')
+    return resp
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
