@@ -44,7 +44,7 @@ def get_features(bbox):
     if myjson['type'] == 'FeatureCollection':
         for feature in myjson['features']:
             pos = transform(LUREF, WGS84, feature['geometry']['coordinates'][0], feature['geometry']['coordinates'][1])
-            feature['geometry']['coordinates'] = ["{0:.6f}".format(pos[0]), "{0:.6f}".format(pos[1])]
+            feature['geometry']['coordinates'] = [float("{0:.6f}".format(pos[0])), float("{0:.6f}".format(pos[1]))]
             if not debug:
                 del feature['properties']['html']
             feature['properties']['mobiliteitid'] = feature['id']
